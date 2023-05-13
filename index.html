@@ -16,9 +16,8 @@
           <div>12.02.22 12:18</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
-            <ul id="list">
-            </ul>
+          <div class="comment-text" id="list">
+            Это будет первый комментарий на этой странице
           </div>
         </div>
         <div class="comment-footer">
@@ -66,7 +65,8 @@
   //код
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
-    listElement.innerHTML = oldListElement + nameInputElement.value + " : " + textInputElement.value;
+    listElement.innerHTML = oldListElement +
+      `<li> ${nameInputElement.value} : ${textInputElement.value} </li>`
   });
   //как ставить переменные в текстепыкерыкеорыкеор
 </script>
