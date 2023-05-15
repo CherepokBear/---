@@ -63,25 +63,39 @@
   const nameInputElement = document.getElementById('name');
   const textInputElement = document.getElementById('textInput');
   const dateElement = document.getElementById('date');
-  const date = getTime();
+  const date = new Date();
+  let options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+  };
 
-  function getTime() {
-    var today = new Date();
-    today.setDate(today.getDate());
-    //return Utilities.formatDate(today, 'PST', 'yyyy.MM.dd');
-    return Utilities.formatDate(today, 'GMT+03:00', 'HH:mm');
+  const initLikeElement = () => {
+    const likeElement = document.querySelectorAll('.likes');
+    for (const likeElements of likeElement) {
+      likeElements.addEventListener('click', () => {
+        console.log(1);
+      });
+    };
+
   }
 
+
   //код
+  initLikeElement();
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
+    const formatDate = date.toLocaleString("ru", options);
 
     listElement.innerHTML = oldListElement +
 
       `<li class="comment" id="list">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
-          <div>${date}</div>
+          <div>${formatDate}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -95,7 +109,10 @@
           </div>
         </div>
       </li>`
+
+    initLikeElement(console.log(1));
   });
+
 </script>
 
 </html>
