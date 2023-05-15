@@ -10,7 +10,7 @@
 <body>
   <div class="container">
     <ul class="comments" id="list">
-      <li class="comment">
+      <li class="comment" id="date">
         <div class="comment-header">
           <div>Глеб Фокин</div>
           <div>12.02.22 12:18</div>
@@ -57,22 +57,31 @@
 </body>
 
 <script>
-  //переменныеыкеоыкоыкоыкеко
+  //переменные
   const buttonElement = document.getElementById('button');
   const listElement = document.getElementById('list');
   const nameInputElement = document.getElementById('name');
   const textInputElement = document.getElementById('textInput');
+  const dateElement = document.getElementById('date');
+  const date = getTime();
 
+  function getTime() {
+    var today = new Date();
+    today.setDate(today.getDate());
+    //return Utilities.formatDate(today, 'PST', 'yyyy.MM.dd');
+    return Utilities.formatDate(today, 'GMT+03:00', 'HH:mm');
+  }
 
   //код
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
+
     listElement.innerHTML = oldListElement +
 
       `<li class="comment" id="list">
         <div class="comment-header">
           <div>${nameInputElement.value}</div>
-          <div>13.05.23 19:18</div>
+          <div>${date}</div>
         </div>
         <div class="comment-body">
           <div class="comment-text">
@@ -87,14 +96,6 @@
         </div>
       </li>`
   });
-  //как ставить переменные в текстепыкерыкеорыкеор
-
-  // function getTime() {
-  //   var today = new Date();
-  //   today.setDate(today.getDate());
-  //   //return Utilities.formatDate(today, 'PST', 'yyyy.MM.dd');
-  //   return Utilities.formatDate(today, 'GMT+03:00', 'HH:mm');
-  // }
 </script>
 
 </html>
