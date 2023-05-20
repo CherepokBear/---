@@ -9,42 +9,7 @@
 
 <body>
   <div class="container">
-    <ul class="comments" id="list">
-      <!-- <li class="comment" id="date">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button" data-index="${index}"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like" id="button-like" data-index="${index}"></button>
-          </div>
-        </div>
-      </li> -->
-    </ul>
+    <ul class="comments" id="list"></ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name" value="" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textInput"
@@ -63,27 +28,32 @@
   const nameInputElement = document.getElementById('name');
   const textInputElement = document.getElementById('textInput');
   const dateElement = document.getElementById('date');
-
-  const buttonLikeElement = document.getElementById('button-like');
-  const likeAddElement = document.querySelectorAll('.likes');
+  const likeAddElement = document.querySelectorAll('.like-button');
 
   const numberLikes = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       coments: "Это будет первый комментарий на этой странице",
+      likes: 1,
+      isActiveLike: false,
     },
     {
       name: "Варвара Н.",
       date: "13.02.22 19:22",
       coments: "Мне нравится как оформлена эта страница! ❤",
-    }
+      likes: 75,
+      isActiveLike: false,
+    },
   ]
 
   const renderLikes = () => {
-    const likeHTML = numberLikes.map((like) => {
-      return
-      `<li class="comment">
+    const likeHTML = numberLikes.map((like, index) => {
+      let activeLike = '';
+      if (numberLikes[index].isActiveLike) {
+        activeLike = '-active-like'
+      }
+      return `<li class="comment">
         <div class="comment-header">
           <div>${like.name}</div>
           <div>${like.date}</div>
@@ -95,38 +65,38 @@
         </div>
         <div class="comment-footer">
           <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like" id="button-like" data-index=""></button>
+            <span class="likes-counter">${like.likes}</span>
+            <button  data-index="${index}" class="like-button ${activeLike}" id="button-like"></button>
           </div>
         </div>
       </li>`;
     })
       .join("");
 
-    // listElement.innerHTML = likeHTML;
+    listElement.innerHTML = likeHTML;
   }
-  // renderLikes();
-  console.log(renderLikes());
+  renderLikes();
 
   const initLikeElement = () => {
-    const likeElement = document.querySelectorAll('.like-button');
-    for (const likeElements of likeElement) {
-      likeElements.addEventListener('click', () => {
-        // const index = likeElements.dataset.index;
-        numberLikes.push({
-          name: nameInputElement.value,
-          date: formatDate,
-          coments: textInputElement,
-        });
+    const likeAddElement = document.querySelectorAll('.like-button');
+
+    for (const likeElements of likeAddElement) {
+      likeElements.addEventListener('click', (e) => {
+        // e.stopPropagation();
+        const index = likeElements.dataset.index;
+        if (numberLikes[index].isActiveLike) {
+          numberLikes[index].likes--
+        } else {
+          numberLikes[index].likes++
+        }
+        numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
         renderLikes();
       });
     };
   }
-  renderLikes();
   initLikeElement();
 
-  //код 
-
+  //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
 
@@ -137,31 +107,21 @@
       day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
-      second: 'numeric'
+      second: 'numeric',
     };
     const formatDate = date.toLocaleString("ru", options);
 
     listElement.innerHTML = oldListElement + initLikeElement();
-    // + `<li class="comment" id="list">
-    //   <div class="comment-header">
-    //     <div>${nameInputElement.value}</div>
-    //     <div>${formatDate}</div>
-    //   </div>
-    //   <div class="comment-body">
-    //     <div class="comment-text">
-    //       ${textInputElement.value}
-    //     </div>
-    //   </div>
-    //   <div class="comment-footer">
-    //     <div class="likes">
-    //        <span class="likes-counter">0</span>
-    //        <button class="like-button"></button>
-    //      </div>
-    //   </div>
-    // </li>`
-    // renderLikes();
-    initLikeElement();
+
+    numberLikes.push({
+      name: nameInputElement.value,
+      date: formatDate,
+      coments: textInputElement.value,
+      likes: 0,
+    });
+    renderLikes();
   });
+
 </script>
 
 </html>
