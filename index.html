@@ -9,43 +9,7 @@
 
 <body>
   <div class="container">
-    <ul class="comments">
-      <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            <ul id="list">
-            </ul>
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.М.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li>
-    </ul>
+    <ul class="comments" id="list"></ul>
     <div class="add-form">
       <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name" value="" />
       <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textInput"
@@ -63,12 +27,101 @@
   const listElement = document.getElementById('list');
   const nameInputElement = document.getElementById('name');
   const textInputElement = document.getElementById('textInput');
-  //код
+  const dateElement = document.getElementById('date');
+  const likeAddElement = document.querySelectorAll('.like-button');
+
+  const numberLikes = [
+    {
+      name: "Глеб Фокин",
+      date: "12.02.22 12:18",
+      coments: "Это будет первый комментарий на этой странице",
+      likes: 1,
+      isActiveLike: false,
+    },
+    {
+      name: "Варвара Н.",
+      date: "13.02.22 19:22",
+      coments: "Мне нравится как оформлена эта страница! ❤",
+      likes: 75,
+      isActiveLike: false,
+    },
+  ]
+
+  const renderLikes = () => {
+    const likeHTML = numberLikes.map((like, index) => {
+      let activeLike = '';
+      if (numberLikes[index].isActiveLike) {
+        activeLike = '-active-like'
+      }
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${like.name}</div>
+          <div>${like.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">
+            ${like.coments}
+          </div>
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${like.likes}</span>
+            <button  data-index="${index}" class="like-button ${activeLike}" id="button-like"></button>
+          </div>
+        </div>
+      </li>`;
+    })
+      .join("");
+
+    listElement.innerHTML = likeHTML;
+  }
+  renderLikes();
+
+  const initLikeElement = () => {
+    const likeAddElement = document.querySelectorAll('.like-button');
+
+    for (const likeElements of likeAddElement) {
+      likeElements.addEventListener('click', (e) => {
+        // e.stopPropagation();
+        const index = likeElements.dataset.index;
+        if (numberLikes[index].isActiveLike) {
+          numberLikes[index].likes--
+        } else {
+          numberLikes[index].likes++
+        }
+        numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
+        renderLikes();
+      });
+    };
+  }
+  initLikeElement();
+
+  //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
-    listElement.innerHTML = oldListElement + nameInputElement.value + " : " + textInputElement.value;
+
+    const date = new Date();
+    let options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    };
+    const formatDate = date.toLocaleString("ru", options);
+
+    listElement.innerHTML = oldListElement + initLikeElement();
+
+    numberLikes.push({
+      name: nameInputElement.value,
+      date: formatDate,
+      coments: textInputElement.value,
+      likes: 0,
+    });
+    renderLikes();
   });
-  //как ставить переменные в тексте
+
 </script>
 
 </html>
