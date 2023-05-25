@@ -47,6 +47,24 @@
     },
   ]
 
+  const initLikeElement = () => {
+    const likeAddElement = document.querySelectorAll('.like-button');
+
+    for (const likeElements of likeAddElement) {
+      likeElements.addEventListener('click', (e) => {
+
+        const index = likeElements.dataset.index;
+        if (numberLikes[index].isActiveLike) {
+          numberLikes[index].likes--
+        } else {
+          numberLikes[index].likes++
+        }
+        numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
+        renderLikes();
+      });
+    };
+  };
+
   const renderLikes = () => {
     const likeHTML = numberLikes.map((like, index) => {
       let activeLike = '';
@@ -78,23 +96,6 @@
   };
   renderLikes();
 
-  const initLikeElement = () => {
-    const likeAddElement = document.querySelectorAll('.like-button');
-
-    for (const likeElements of likeAddElement) {
-      likeElements.addEventListener('click', (e) => {
-        const index = likeElements.dataset.index;
-        if (numberLikes[index].isActiveLike) {
-          numberLikes[index].likes--
-        } else {
-          numberLikes[index].likes++
-        }
-        numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
-        renderLikes();
-      });
-    };
-  }
-
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
@@ -118,7 +119,26 @@
       likes: 0,
     });
     renderLikes();
+
+    // numberLikes.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   date: formatDate,
+    //   text: textInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   like: 0,
+    //   isActiveLike: false,
+    // });
+
+
   });
+
 
 </script>
 
