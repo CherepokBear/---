@@ -29,6 +29,7 @@
   const textInputElement = document.getElementById('textInput');
   const dateElement = document.getElementById('date');
   const likeAddElement = document.querySelectorAll('.like-button');
+  const editButton = document.querySelector('.editButton');
 
   const numberLikes = [
     {
@@ -37,6 +38,7 @@
       coments: "Это будет первый комментарий на этой странице",
       likes: 1,
       isActiveLike: false,
+      isEdit: false,
     },
     {
       name: "Варвара Н.",
@@ -44,6 +46,7 @@
       coments: "Мне нравится как оформлена эта страница! ❤",
       likes: 75,
       isActiveLike: false,
+      isEdit: false,
     },
   ]
 
@@ -52,7 +55,6 @@
 
     for (const likeElements of likeAddElement) {
       likeElements.addEventListener('click', (e) => {
-
         const index = likeElements.dataset.index;
         if (numberLikes[index].isActiveLike) {
           numberLikes[index].likes--
@@ -63,6 +65,24 @@
         renderLikes();
       });
     };
+  };
+
+  const edit = () => {
+    const editButton = document.querySelector('.edit-button');
+    const comenBody = document.querySelectorAll('.comment-body');
+    editButton.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        const comenBodyElem = comentBody[index];
+        const number = numberLikes[index];
+        if (number.isEdit) {
+          const textarea = document.querySelector('.edit-textarea');
+          const newComent = textarea.value;
+          coment.text = newComent;
+        }
+        number.isEdit = !number.isEdit;
+        renderLikes();
+      })
+    });
   };
 
   const renderLikes = () => {
@@ -77,14 +97,18 @@
           <div>${like.date}</div>
         </div>
         <div class="comment-body">
-          <div class="comment-text">
+          <div class="${like.isEdit ? 'none-visible' : 'edit-textarea'}">
             ${like.coments}
           </div>
+          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'}">
+            ${like.coments}
+          </textarea>
         </div>
         <div class="comment-footer">
+          <button class="edit-button">${like.isEdit ? "Сохранить" : "Редактировать"}</button>
           <div class="likes">
             <span class="likes-counter">${like.likes}</span>
-            <button  data-index="${index}" class="like-button ${activeLike}" id="button-like"></button>
+            <button  class="like-button" >${activeLike}</button>
           </div>
         </div>
       </li>`;
@@ -93,13 +117,13 @@
 
     listElement.innerHTML = likeHTML;
     initLikeElement();
+    edit();
   };
   renderLikes();
 
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
-
     const date = new Date();
     let options = {
       year: 'numeric',
@@ -111,7 +135,6 @@
     };
     const formatDate = date.toLocaleString("ru", options);
 
-
     numberLikes.push({
       name: nameInputElement.value,
       date: formatDate,
@@ -120,25 +143,23 @@
     });
     renderLikes();
 
-    // numberLikes.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   date: formatDate,
-    //   text: textInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   like: 0,
-    //   isActiveLike: false,
-    // });
-
+    numberLikes.push({
+      name: nameInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      date: formatDate,
+      text: textInputElement.value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;"),
+      like: 0,
+      isActiveLike: false,
+    });
 
   });
-
 
 </script>
 
