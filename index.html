@@ -50,11 +50,13 @@
     },
   ]
 
+
   const initLikeElement = () => {
     const likeAddElement = document.querySelectorAll('.like-button');
 
     for (const likeElements of likeAddElement) {
-      likeElements.addEventListener('click', (e) => {
+      likeElements.addEventListener('click', () => {
+
         const index = likeElements.dataset.index;
         if (numberLikes[index].isActiveLike) {
           numberLikes[index].likes--
@@ -67,29 +69,35 @@
     };
   };
 
+
   const edit = () => {
-    const editButton = document.querySelector('.edit-button');
-    const comenBody = document.querySelectorAll('.comment-body');
+    const editButton = document.querySelectorAll('.edit-button');
+
     editButton.forEach((button, index) => {
+
       button.addEventListener('click', () => {
-        const comenBodyElem = comentBody[index];
+
+        const comentBody = document.querySelectorAll('.comment-body');
+        // const comenBodyElem = comentBody[index];
         const number = numberLikes[index];
         if (number.isEdit) {
           const textarea = document.querySelector('.edit-textarea');
           const newComent = textarea.value;
-          coment.text = newComent;
+          number.coments = newComent;
         }
         number.isEdit = !number.isEdit;
         renderLikes();
       })
-    });
+    })
   };
+
+
 
   const renderLikes = () => {
     const likeHTML = numberLikes.map((like, index) => {
       let activeLike = '';
       if (numberLikes[index].isActiveLike) {
-        activeLike = '-active-like'
+        // activeLike = '-active-like'
       }
       return `<li class="comment">
         <div class="comment-header">
@@ -108,18 +116,19 @@
           <button class="edit-button">${like.isEdit ? "Сохранить" : "Редактировать"}</button>
           <div class="likes">
             <span class="likes-counter">${like.likes}</span>
-            <button  class="like-button" >${activeLike}</button>
+            <button  class="like-button" data-index='${index}'>${activeLike}</button>
           </div>
         </div>
       </li>`;
     })
       .join("");
-
     listElement.innerHTML = likeHTML;
     initLikeElement();
     edit();
   };
   renderLikes();
+
+
 
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
@@ -160,6 +169,8 @@
     });
 
   });
+
+
 
 </script>
 
