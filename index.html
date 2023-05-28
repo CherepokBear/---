@@ -56,8 +56,8 @@
     const likeAddElement = document.querySelectorAll('.like-button');
 
     for (const likeElements of likeAddElement) {
-      likeElements.addEventListener('click', () => {
-
+      likeElements.addEventListener('click', (e) => {
+        e.stopPropagation();
         const index = likeElements.dataset.index;
         if (numberLikes[index].isActiveLike) {
           numberLikes[index].likes--
@@ -69,6 +69,19 @@
       });
     };
   };
+
+
+  const reply = () => {
+    const comentInput = document.querySelector('.add-form-text');
+    const editButton = document.querySelectorAll('.comment');
+    for (const button of editButton) {
+      button.addEventListener('click', () => {
+        console.log(comentInput);
+        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` +
+          `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+      });
+    }
+  }
 
   // const edit = () => {
   //   const editButton = document.querySelectorAll('.edit-button');
@@ -92,23 +105,11 @@
   // };
 
 
-  const reply = () => {
-    const comentInput = document.querySelector('.add-form-text');
-    const editButton = document.querySelectorAll('.comment');
-    for (const button of editButton) {
-      button.addEventListener('click', () => {
-        console.log(comentInput);
-        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` + `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
-      });
-    }
-  }
+
 
   const renderComments = () => {
     const likeHTML = numberLikes.map((like, index) => {
-      // let activeLike = '';
-      // if (numberLikes[index].isActiveLike) {
-      //   activeLike = '-active-like'
-      // }
+
       return `<li class="comment">
         <div class="comment-header">
           <div>${like.name}</div>
@@ -133,9 +134,10 @@
     })
       .join("");
     listElement.innerHTML = likeHTML;
+    reply();
     initLikeElement();
     // edit();
-    reply();
+
   };
   renderComments();
 
@@ -179,6 +181,7 @@
     // });
     renderComments();
   });
+
 
 </script>
 
