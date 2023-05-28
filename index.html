@@ -70,13 +70,12 @@
     };
   };
 
-
   const reply = () => {
     const comentInput = document.querySelector('.add-form-text');
     const editButton = document.querySelectorAll('.comment');
     for (const button of editButton) {
       button.addEventListener('click', () => {
-        console.log(comentInput);
+
         comentInput.value = `${button.querySelector('.coment-text').innerHTML}` +
           `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
       });
@@ -104,9 +103,6 @@
   //   })
   // };
 
-
-
-
   const renderComments = () => {
     const likeHTML = numberLikes.map((like, index) => {
 
@@ -115,11 +111,11 @@
           <div>${like.name}</div>
           <div>${like.date}</div>
         </div>
-        <div class="comment-body coment-text">
-          <div id = "text-reply" class="${like.isEdit ? 'none-visible' : 'edit-textarea'} ">
+        <div class="comment-body ">
+          <div id = "text-reply" class="${like.isEdit ? 'none-visible' : 'edit-textarea'} coment-text">
             ${like.coments}
           </div>
-          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'} ">
+          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'} coment-text">
             ${like.coments}
           </textarea>
         </div>
