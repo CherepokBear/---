@@ -65,7 +65,7 @@
           numberLikes[index].likes++
         }
         numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
-        renderLikes();
+        renderComments();
       });
     };
   };
@@ -86,27 +86,29 @@
   //         number.coments = newComent;
   //       }
   //       number.isEdit = !number.isEdit;
-  //       renderLikes();
+  //       renderComments();
   //     })
   //   })
   // };
 
 
   const reply = () => {
-    const comentInput = document.querySelectorAll('.add-form-text');
+    const comentInput = document.querySelector('.add-form-text');
     const editButton = document.querySelectorAll('.comment');
     for (const button of editButton) {
       button.addEventListener('click', () => {
+        console.log(comentInput);
         comentInput.value = `${button.querySelector('.coment-text').innerHTML}` + `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
       });
     }
   }
-  const renderLikes = () => {
+
+  const renderComments = () => {
     const likeHTML = numberLikes.map((like, index) => {
-      let activeLike = '';
-      if (numberLikes[index].isActiveLike) {
-        activeLike = '-active-like'
-      }
+      // let activeLike = '';
+      // if (numberLikes[index].isActiveLike) {
+      //   activeLike = '-active-like'
+      // }
       return `<li class="comment">
         <div class="comment-header">
           <div>${like.name}</div>
@@ -124,10 +126,10 @@
           <button class="edit-button">${like.isEdit ? "Сохранить" : "Редактировать"}</button>
           <div class="likes">
             <span class="likes-counter">${like.likes}</span>
-            <button  class="like-button" data-index='${index}'>${activeLike}</button>
+            <button  class="like-button ${like.isActiveLike ? '-active-like' : ''}"  data-index='${index}'></button>
           </div>
         </div>
-      </li>`; 0
+      </li>`;
     })
       .join("");
     listElement.innerHTML = likeHTML;
@@ -135,7 +137,7 @@
     // edit();
     reply();
   };
-  renderLikes();
+  renderComments();
 
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
@@ -175,7 +177,7 @@
     //   like: 0,
     //   isActiveLike: false,
     // });
-    renderLikes();
+    renderComments();
   });
 
 </script>
