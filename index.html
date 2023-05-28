@@ -39,6 +39,7 @@
       likes: 1,
       isActiveLike: false,
       isEdit: false,
+
     },
     {
       name: "Варвара Н.",
@@ -47,9 +48,9 @@
       likes: 75,
       isActiveLike: false,
       isEdit: false,
+
     },
   ]
-
 
   const initLikeElement = () => {
     const likeAddElement = document.querySelectorAll('.like-button');
@@ -69,46 +70,53 @@
     };
   };
 
+  // const edit = () => {
+  //   const editButton = document.querySelectorAll('.edit-button');
 
-  const edit = () => {
-    const editButton = document.querySelectorAll('.edit-button');
+  //   editButton.forEach((button, index) => {
 
-    editButton.forEach((button, index) => {
+  //     button.addEventListener('click', () => {
 
+  //       const comentBody = document.querySelectorAll('.comment-body');
+  //       // const comenBodyElem = comentBody[index];
+  //       const number = numberLikes[index];
+  //       if (number.isEdit) {
+  //         const textarea = document.querySelector('.edit-textarea');
+  //         const newComent = textarea.value;
+  //         number.coments = newComent;
+  //       }
+  //       number.isEdit = !number.isEdit;
+  //       renderLikes();
+  //     })
+  //   })
+  // };
+
+
+  const reply = () => {
+    const comentInput = document.querySelectorAll('.add-form-text');
+    const editButton = document.querySelectorAll('.comment');
+    for (const button of editButton) {
       button.addEventListener('click', () => {
-
-        const comentBody = document.querySelectorAll('.comment-body');
-        // const comenBodyElem = comentBody[index];
-        const number = numberLikes[index];
-        if (number.isEdit) {
-          const textarea = document.querySelector('.edit-textarea');
-          const newComent = textarea.value;
-          number.coments = newComent;
-        }
-        number.isEdit = !number.isEdit;
-        renderLikes();
-      })
-    })
-  };
-
-
-
+        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` + `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+      });
+    }
+  }
   const renderLikes = () => {
     const likeHTML = numberLikes.map((like, index) => {
       let activeLike = '';
       if (numberLikes[index].isActiveLike) {
-        // activeLike = '-active-like'
+        activeLike = '-active-like'
       }
       return `<li class="comment">
         <div class="comment-header">
           <div>${like.name}</div>
           <div>${like.date}</div>
         </div>
-        <div class="comment-body">
-          <div class="${like.isEdit ? 'none-visible' : 'edit-textarea'}">
+        <div class="comment-body coment-text">
+          <div id = "text-reply" class="${like.isEdit ? 'none-visible' : 'edit-textarea'} ">
             ${like.coments}
           </div>
-          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'}">
+          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'} ">
             ${like.coments}
           </textarea>
         </div>
@@ -119,20 +127,21 @@
             <button  class="like-button" data-index='${index}'>${activeLike}</button>
           </div>
         </div>
-      </li>`;
+      </li>`; 0
     })
       .join("");
     listElement.innerHTML = likeHTML;
     initLikeElement();
-    edit();
+    // edit();
+    reply();
   };
   renderLikes();
 
-
-
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
+
     const oldListElement = listElement.innerHTML;
+
     const date = new Date();
     let options = {
       year: 'numeric',
@@ -150,27 +159,24 @@
       coments: textInputElement.value,
       likes: 0,
     });
+
+    // numberLikes.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   date: formatDate,
+    //   text: textInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   like: 0,
+    //   isActiveLike: false,
+    // });
     renderLikes();
-
-    numberLikes.push({
-      name: nameInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      date: formatDate,
-      text: textInputElement.value
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;"),
-      like: 0,
-      isActiveLike: false,
-    });
-
   });
-
-
 
 </script>
 
