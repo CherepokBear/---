@@ -31,7 +31,7 @@
   const likeAddElement = document.querySelectorAll('.like-button');
   const editButton = document.querySelector('.editButton');
 
-  const numberLikes = [
+  let numberLikes = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
@@ -60,7 +60,7 @@
   const jsonPromise = response.json();
   jsonPromise.then((responseData) => {
 	    console.log(responseData)
-      numberLikes = responseData.todos;
+      numberLikes = responseData.comments;
       renderComments();
   });
 });
@@ -205,7 +205,7 @@
   // Подписываемся на результат преобразования
   jsonPromise.then((responseData) => {
 	    console.log(responseData)
-      numberLikes = responseData.todos;
+      numberLikes = responseData.comments;
       renderComments();
   });
 });
