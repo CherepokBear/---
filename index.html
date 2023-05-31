@@ -52,6 +52,19 @@
     },
   ]
 
+  const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    method: "GET",
+});
+
+  fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+	    console.log(responseData)
+      numberLikes = responseData.todos;
+      renderComments();
+  });
+});
+
   const initLikeElement = () => {
     const likeAddElement = document.querySelectorAll('.like-button');
 
@@ -154,9 +167,9 @@
     const formatDate = date.toLocaleString("ru", options);
 
     numberLikes.push({
-      name: nameInputElement.value,
-      date: formatDate,
-      coments: textInputElement.value,
+      // name: nameInputElement.value,
+      // date: formatDate,
+      // coments: textInputElement.value,
       likes: 0,
     });
 
@@ -175,6 +188,28 @@
     //   like: 0,
     //   isActiveLike: false,
     // });
+
+    const fetchPromise = fetch("https://webdev-hw-api.vercel.app/api/todos", {
+    method: "POST",
+    body: JSON.stringify({
+      name: nameInputElement.value,
+      date: formatDate,
+      coments: textInputElement.value,
+    })
+    });
+
+    fetchPromise.then((response) => {
+  // Запускаем, преобразовываем сырые данные от API в JSON-формат
+  const jsonPromise = response.json();
+
+  // Подписываемся на результат преобразования
+  jsonPromise.then((responseData) => {
+	    console.log(responseData)
+      numberLikes = responseData.todos;
+      renderComments();
+  });
+});
+
     renderComments();
   });
 
@@ -182,3 +217,5 @@
 </script>
 
 </html>
+
+
