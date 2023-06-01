@@ -29,14 +29,17 @@
   const textInputElement = document.getElementById('textInput');
   const dateElement = document.getElementById('date');
   const likeAddElement = document.querySelectorAll('.like-button');
+  const editButton = document.querySelector('.editButton');
 
-  const numberLikes = [
+  let numberLikes = [
     {
       name: "Глеб Фокин",
       date: "12.02.22 12:18",
       coments: "Это будет первый комментарий на этой странице",
       likes: 1,
       isActiveLike: false,
+      isEdit: false,
+
     },
     {
       name: "Варвара Н.",
@@ -44,45 +47,30 @@
       coments: "Мне нравится как оформлена эта страница! ❤",
       likes: 75,
       isActiveLike: false,
+      isEdit: false,
+
     },
   ]
 
-  const renderLikes = () => {
-    const likeHTML = numberLikes.map((like, index) => {
-      let activeLike = '';
-      if (numberLikes[index].isActiveLike) {
-        activeLike = '-active-like'
-      }
-      return `<li class="comment">
-        <div class="comment-header">
-          <div>${like.name}</div>
-          <div>${like.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${like.coments}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${like.likes}</span>
-            <button  data-index="${index}" class="like-button ${activeLike}" id="button-like"></button>
-          </div>
-        </div>
-      </li>`;
-    })
-      .join("");
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+    method: "GET",
+});
 
-    listElement.innerHTML = likeHTML;
-  }
-  renderLikes();
+  fetchPromise.then((response) => {
+  const jsonPromise = response.json();
+  jsonPromise.then((responseData) => {
+	    console.log(responseData)
+      numberLikes = responseData.comments;
+      renderComments();
+  });
+});
 
   const initLikeElement = () => {
     const likeAddElement = document.querySelectorAll('.like-button');
 
     for (const likeElements of likeAddElement) {
       likeElements.addEventListener('click', (e) => {
-        // e.stopPropagation();
+        e.stopPropagation();
         const index = likeElements.dataset.index;
         if (numberLikes[index].isActiveLike) {
           numberLikes[index].likes--
@@ -90,14 +78,81 @@
           numberLikes[index].likes++
         }
         numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
-        renderLikes();
+        renderComments();
       });
     };
+  };
+
+  const reply = () => {
+    const comentInput = document.querySelector('.add-form-text');
+    const editButton = document.querySelectorAll('.comment');
+    for (const button of editButton) {
+      button.addEventListener('click', () => {
+
+        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` +
+          `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+      });
+    }
   }
-  initLikeElement();
+
+  // const edit = () => {
+  //   const editButton = document.querySelectorAll('.edit-button');
+
+  //   editButton.forEach((button, index) => {
+
+  //     button.addEventListener('click', () => {
+
+  //       const comentBody = document.querySelectorAll('.comment-body');
+  //       // const comenBodyElem = comentBody[index];
+  //       const number = numberLikes[index];
+  //       if (number.isEdit) {
+  //         const textarea = document.querySelector('.edit-textarea');
+  //         const newComent = textarea.value;
+  //         number.coments = newComent;
+  //       }
+  //       number.isEdit = !number.isEdit;
+  //       renderComments();
+  //     })
+  //   })
+  // };
+
+  const renderComments = () => {
+    const likeHTML = numberLikes.map((like, index) => {
+
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${like.name}</div>
+          <div>${like.date}</div>
+        </div>
+        <div class="comment-body ">
+          <div id = "text-reply" class="${like.isEdit ? 'none-visible' : 'edit-textarea'} coment-text">
+            ${like.coments}
+          </div>
+          <textarea class="${like.isEdit ? 'edit-textarea' : 'none-visible'} coment-text">
+            ${like.coments}
+          </textarea>
+        </div>
+        <div class="comment-footer">
+          <button class="edit-button">${like.isEdit ? "Сохранить" : "Редактировать"}</button>
+          <div class="likes">
+            <span class="likes-counter">${like.likes}</span>
+            <button  class="like-button ${like.isActiveLike ? '-active-like' : ''}"  data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`;
+    })
+      .join("");
+    listElement.innerHTML = likeHTML;
+    reply();
+    initLikeElement();
+    // edit();
+
+  };
+  renderComments();
 
   //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
+
     const oldListElement = listElement.innerHTML;
 
     const date = new Date();
@@ -111,17 +166,56 @@
     };
     const formatDate = date.toLocaleString("ru", options);
 
-    listElement.innerHTML = oldListElement + initLikeElement();
-
     numberLikes.push({
+      // name: nameInputElement.value,
+      // date: formatDate,
+      // coments: textInputElement.value,
+      likes: 0,
+    });
+
+    // numberLikes.push({
+    //   name: nameInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   date: formatDate,
+    //   text: textInputElement.value
+    //     .replaceAll("&", "&amp;")
+    //     .replaceAll("<", "&lt;")
+    //     .replaceAll(">", "&gt;")
+    //     .replaceAll('"', "&quot;"),
+    //   like: 0,
+    //   isActiveLike: false,
+    // });
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+    method: "POST",
+    body: JSON.stringify({
       name: nameInputElement.value,
       date: formatDate,
       coments: textInputElement.value,
-      likes: 0,
+    })
     });
-    renderLikes();
+
+    fetchPromise.then((response) => {
+  // Запускаем, преобразовываем сырые данные от API в JSON-формат
+  const jsonPromise = response.json();
+
+  // Подписываемся на результат преобразования
+  jsonPromise.then((responseData) => {
+	    console.log(responseData)
+      numberLikes = responseData.comments;
+      renderComments();
   });
+});
+
+    renderComments();
+  });
+
 
 </script>
 
 </html>
+
+
