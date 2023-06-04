@@ -124,6 +124,12 @@
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
 
+    const startAt = Date.now();
+    console.log("Начинаем делать запрос");
+
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Элемент добавлятся...";
+
     fetch('https://wedev-api.sky.pro/api/v1/dima-vorobev/comments',
       {
         method: 'POST',
@@ -131,49 +137,87 @@
           {
             text: textInputElement.value,
             name: nameInputElement.value,
-          }
-        )
+          })
+      })
+      // .then((response) => {
+      //   response.json()
+      //     .then((responseData) => {
+      //       comments = responseData.numberLikes;
+      //     })
+
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
       })
       .then((response) => {
-        response.json()
-          .then((responseData) => {
-            comments = responseData.numberLikes;
-          })
-
-    renderComments()
+        return response.json();
       })
-      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
-    method: "GET",
-  });
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-
-      const aapComents = responseData.comments.map((comment) => {
-        const dateComment = new Date(comment.date);
-        return {
-          name: comment.author.name,
-          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-            dateComment.getFullYear().toString().slice(-2) + ' ' +
-            dateComment.getHours().toString().padStart(2, '0') + ':' +
-            dateComment.getMinutes().toString().padStart(2, '0'),
-          coments: comment.text,
-          likes: comment.likes,
-          isActiveLike: false,
-        };
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
+      })
+      .then((responseData) => {
+        return fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+          method: "GET",
+        });
+      })
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        console.log("Время: " + (Date.now() - startAt));
+        return response;
+      })
+      .then((responseData) => {
+        // numberLikes = responseData.comments;
+        comments = responseData.numberLikes;
+        renderComments();
+      })
+      .then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
       });
 
-      numberLikes = aapComents;
-      renderComments();
-    });
+    //     renderComments()
+    //   })
+
+
+    // const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+    //   method: "GET",
+    // });
+
+    // fetchPromise.then((response) => {
+    //   const jsonPromise = response.json();
+    //   jsonPromise.then((responseData) => {
+
+    //     const aapComents = responseData.comments.map((comment) => {
+    //       const dateComment = new Date(comment.date);
+    //       return {
+    //         name: comment.author.name,
+    //         date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+    //           (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+    //           dateComment.getFullYear().toString().slice(-2) + ' ' +
+    //           dateComment.getHours().toString().padStart(2, '0') + ':' +
+    //           dateComment.getMinutes().toString().padStart(2, '0'),
+    //         coments: comment.text,
+    //         likes: comment.likes,
+    //         isActiveLike: false,
+    //       };
+    //     });
+
+    //     numberLikes = aapComents;
+    renderComments();
   });
+  //   });
 
-  })
+  // })
 
-  
-    renderComments()
+
+  renderComments()
 </script>
 
 </html>
