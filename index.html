@@ -31,26 +31,7 @@
   const likeAddElement = document.querySelectorAll('.like-button');
   const editButton = document.querySelector('.editButton');
 
-  let numberLikes = [
-    // {
-    //   name: "Глеб Фокин",
-    //   date: "12.02.22 12:18",
-    //   coments: "Это будет первый комментарий на этой странице",
-    //   likes: 1,
-    //   isActiveLike: false,
-    //   isEdit: false,
-
-    // },
-    // {
-    //   name: "Варвара Н.",
-    //   date: "13.02.22 19:22",
-    //   coments: "Мне нравится как оформлена эта страница! ❤",
-    //   likes: 75,
-    //   isActiveLike: false,
-    //   isEdit: false,
-
-    // },
-  ]
+  let numberLikes = []
 
   const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
     method: "GET",
@@ -131,78 +112,18 @@
             <button  class="like-button "  data-index='${index}'></button>
           </div>
         </div>
-      </li>`;
-
+      </li>`
     })
       .join("");
     listElement.innerHTML = likeHTML;
     reply();
     initLikeElement();
-
-
   };
   renderComments();
 
-  //код по клику на кнопку написать
   buttonElement.addEventListener('click', () => {
-
     const oldListElement = listElement.innerHTML;
 
-    // const date = new Date();
-    // let options = {
-    //   year: 'numeric',
-    //   month: 'long',
-    //   day: 'numeric',
-    //   hour: 'numeric',
-    //   minute: 'numeric',
-    //   second: 'numeric',
-    // };
-    // const formatDate = date.toLocaleString("ru", options);
-
-    // numberLikes.push({
-    //   name: nameInputElement.value,
-    //   date: formatDate,
-    //   coments: textInputElement.value,
-    //   likes: 0,
-    // });
-
-    // numberLikes.push({
-    //   name: nameInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   date: formatDate,
-    //   text: textInputElement.value
-    //     .replaceAll("&", "&amp;")
-    //     .replaceAll("<", "&lt;")
-    //     .replaceAll(">", "&gt;")
-    //     .replaceAll('"', "&quot;"),
-    //   like: 0,
-    //   isActiveLike: false,
-    // });
-
-    // const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     name: nameInputElement.value,
-    //     coments: textInputElement.value,
-
-    //   })
-    // });
-
-    // fetchPromise.then((response) => {
-    //   // Запускаем, преобразовываем сырые данные от API в JSON-формат
-    //   const jsonPromise = response.json();
-
-    //   // Подписываемся на результат преобразования
-    //   jsonPromise.then((responseData) => {
-    //     const appComments = responseData.numberLikes
-    //     numberLikes = appComments;
-    //     renderComments();
-    //   });
-    // });
-    // renderComments();
     fetch('https://wedev-api.sky.pro/api/v1/dima-vorobev/comments',
       {
         method: 'POST',
@@ -217,13 +138,42 @@
         response.json()
           .then((responseData) => {
             comments = responseData.numberLikes;
-            renderComments()
-          });
+          })
 
+    renderComments()
       })
+      const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+    method: "GET",
+  });
+
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+
+      const aapComents = responseData.comments.map((comment) => {
+        const dateComment = new Date(comment.date);
+        return {
+          name: comment.author.name,
+          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+            dateComment.getFullYear().toString().slice(-2) + ' ' +
+            dateComment.getHours().toString().padStart(2, '0') + ':' +
+            dateComment.getMinutes().toString().padStart(2, '0'),
+          coments: comment.text,
+          likes: comment.likes,
+          isActiveLike: false,
+        };
+      });
+
+      numberLikes = aapComents;
+      renderComments();
+    });
+  });
 
   })
-  renderComments()
+
+  
+    renderComments()
 </script>
 
 </html>
