@@ -84,9 +84,9 @@
     const editButton = document.querySelectorAll('.comment');
     for (const button of editButton) {
       button.addEventListener('click', () => {
-
-        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` +
-          `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` 
+        // + 
+        // `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
       });
     }
   }
@@ -106,7 +106,6 @@
 
         </div>
         <div class="comment-footer">
-          
           <div class="likes">
             <span class="likes-counter">${comment.likes}</span>
             <button  class="like-button "  data-index='${index}'></button>
@@ -139,11 +138,6 @@
             name: nameInputElement.value,
           })
       })
-      // .then((response) => {
-      //   response.json()
-      //     .then((responseData) => {
-      //       comments = responseData.numberLikes;
-      //     })
 
       .then((response) => {
         console.log("Время: " + (Date.now() - startAt));
@@ -173,49 +167,35 @@
         return response;
       })
       .then((responseData) => {
-        // numberLikes = responseData.comments;
-        comments = responseData.numberLikes;
+        const ret = responseData.comments.map((comment, index) => {
+          const date = new Date(comment.date)
+          return {
+          name: comment.author.name,
+          date: date.getDate().toString().padStart(2, '0') + '.' +
+            (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+            date.getFullYear().toString().slice(-2) + ' ' +
+            date.getHours().toString().padStart(2, '0') + ':' +
+            date.getMinutes().toString().padStart(2, '0'),
+          coments: comment.text,
+          likes: comment.likes,
+          isActiveLike: false,
+          }
+        });
+       numberLikes  =  ret;
+       nameInputElement.value = "";
+       textInputElement.value = "";
         renderComments();
       })
       .then((data) => {
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
       });
-
-    //     renderComments()
-    //   })
-
-
-    // const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
-    //   method: "GET",
-    // });
-
-    // fetchPromise.then((response) => {
-    //   const jsonPromise = response.json();
-    //   jsonPromise.then((responseData) => {
-
-    //     const aapComents = responseData.comments.map((comment) => {
-    //       const dateComment = new Date(comment.date);
-    //       return {
-    //         name: comment.author.name,
-    //         date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-    //           (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-    //           dateComment.getFullYear().toString().slice(-2) + ' ' +
-    //           dateComment.getHours().toString().padStart(2, '0') + ':' +
-    //           dateComment.getMinutes().toString().padStart(2, '0'),
-    //         coments: comment.text,
-    //         likes: comment.likes,
-    //         isActiveLike: false,
-    //       };
-    //     });
-
-    //     numberLikes = aapComents;
-    renderComments();
-  });
-  //   });
-
-  // })
-
+      // .catch((error) => { /* обработчик (catch) */
+      // // Этот код выполнится, потому что в обработчике then выше выброшено исключение
+      // alert('Произошла ошибка');
+      // console.log(error) // => TypeError: undefined has no properties
+    })
+  // });
 
   renderComments()
 </script>
