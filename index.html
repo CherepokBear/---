@@ -2,99 +2,99 @@
 <html>
 
 <head>
-  <title>Проект "Комменты"</title>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="styles.css" />
+    <title>Проект "Комменты"</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <div class="container">
-    <ul class="comments" id="list"></ul>
-    <div class="add-form">
-      <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name" value="" />
-      <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textInput"
-        required=""></textarea>
-      <div class="add-form-row">
-        <button class="add-form-button" id="button">Написать</button>
-      </div>
+    <div class="container">
+        <ul class="comments" id="list"></ul>
+        <div class="add-form">
+            <input type="text" class="add-form-name" placeholder="Введите ваше имя" id="name" value="" />
+            <textarea type="textarea" class="add-form-text" placeholder="Введите ваш коментарий" rows="4" id="textInput"
+                required=""></textarea>
+            <div class="add-form-row">
+                <button class="add-form-button" id="button">Написать</button>
+            </div>
+        </div>
     </div>
-  </div>
 </body>
 
 <script>
-  //переменные
-  const buttonElement = document.getElementById('button');
-  const listElement = document.getElementById('list');
-  const nameInputElement = document.getElementById('name');
-  const textInputElement = document.getElementById('textInput');
-  const dateElement = document.getElementById('date');
-  const likeAddElement = document.querySelectorAll('.like-button');
-  const editButton = document.querySelector('.editButton');
-
-  let numberLikes = []
-
-  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
-    method: "GET",
-  });
-
-  fetchPromise.then((response) => {
-    const jsonPromise = response.json();
-    jsonPromise.then((responseData) => {
-
-      const aapComents = responseData.comments.map((comment) => {
-        const dateComment = new Date(comment.date);
-        return {
-          name: comment.author.name,
-          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
-            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
-            dateComment.getFullYear().toString().slice(-2) + ' ' +
-            dateComment.getHours().toString().padStart(2, '0') + ':' +
-            dateComment.getMinutes().toString().padStart(2, '0'),
-          coments: comment.text,
-          likes: comment.likes,
-          isActiveLike: false,
-        };
-      });
-
-      numberLikes = aapComents;
-      renderComments();
-    });
-  });
-
-  const initLikeElement = () => {
+    //переменные
+    const buttonElement = document.getElementById('button');
+    const listElement = document.getElementById('list');
+    const nameInputElement = document.getElementById('name');
+    const textInputElement = document.getElementById('textInput');
+    const dateElement = document.getElementById('date');
     const likeAddElement = document.querySelectorAll('.like-button');
+    const editButton = document.querySelector('.editButton');
 
-    for (const likeElements of likeAddElement) {
-      likeElements.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const index = likeElements.dataset.index;
-        if (numberLikes[index].isActiveLike) {
-          numberLikes[index].likes--
-        } else {
-          numberLikes[index].likes++
-        }
-        numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
-        renderComments();
-      });
+    let numberLikes = []
+
+    const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+        method: "GET",
+    });
+
+    fetchPromise.then((response) => {
+        const jsonPromise = response.json();
+        jsonPromise.then((responseData) => {
+
+            const aapComents = responseData.comments.map((comment) => {
+                const dateComment = new Date(comment.date);
+                return {
+                    name: comment.author.name,
+                    date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+                        (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+                        dateComment.getFullYear().toString().slice(-2) + ' ' +
+                        dateComment.getHours().toString().padStart(2, '0') + ':' +
+                        dateComment.getMinutes().toString().padStart(2, '0'),
+                    coments: comment.text,
+                    likes: comment.likes,
+                    isActiveLike: false,
+                };
+            });
+
+            numberLikes = aapComents;
+            renderComments();
+        });
+    });
+
+    const initLikeElement = () => {
+        const likeAddElement = document.querySelectorAll('.like-button');
+
+        for (const likeElements of likeAddElement) {
+            likeElements.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const index = likeElements.dataset.index;
+                if (numberLikes[index].isActiveLike) {
+                    numberLikes[index].likes--
+                } else {
+                    numberLikes[index].likes++
+                }
+                numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
+                renderComments();
+            });
+        };
     };
-  };
 
-  const reply = () => {
-    const comentInput = document.querySelector('.add-form-text');
-    const editButton = document.querySelectorAll('.comment');
-    for (const button of editButton) {
-      button.addEventListener('click', () => {
-        comentInput.value = `${button.querySelector('.coment-text').innerHTML}` 
-        // + 
-        // `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
-      });
+    const reply = () => {
+        const comentInput = document.querySelector('.add-form-text');
+        const editButton = document.querySelectorAll('.comment');
+        for (const button of editButton) {
+            button.addEventListener('click', () => {
+                comentInput.value = `${button.querySelector('.coment-text').innerHTML}`
+                // + 
+                // `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+            });
+        }
     }
-  }
 
-  const renderComments = () => {
-    const likeHTML = numberLikes.map((comment, index) => {
+    const renderComments = () => {
+        const likeHTML = numberLikes.map((comment, index) => {
 
-      return `<li class="comment">
+            return `<li class="comment">
         <div class="comment-header">
           <div>${comment.name}</div>
           <div>${comment.date}</div>
@@ -112,106 +112,105 @@
           </div>
         </div>
       </li>`
-    })
-      .join("");
-    listElement.innerHTML = likeHTML;
-    reply();
-    initLikeElement();
-  };
-  renderComments();
+        })
+            .join("");
+        listElement.innerHTML = likeHTML;
+        reply();
+        initLikeElement();
+    };
+    renderComments();
 
-  buttonElement.addEventListener('click', () => {
-    const oldListElement = listElement.innerHTML;
+    buttonElement.addEventListener('click', () => {
+        const oldListElement = listElement.innerHTML;
 
-    const startAt = Date.now();
-    console.log("Начинаем делать запрос");
+        const startAt = Date.now();
+        console.log("Начинаем делать запрос");
 
-    buttonElement.disabled = true;
-    buttonElement.textContent = "Элемент добавлятся...";
+        buttonElement.disabled = true;
+        buttonElement.textContent = "Элемент добавлятся...";
 
-    fetch('https://wedev-api.sky.pro/api/v1/dima-vorobev/comments',
-      {
-        method: 'POST',
-        body: JSON.stringify(
-          {
-            text: textInputElement.value,
-            name: nameInputElement.value,
-          })
-      })
+        fetch('https://wedev-api.sky.pro/api/v1/dima-vorobev/comments',
+            {
+                method: 'POST',
+                body: JSON.stringify(
+                    {
+                        text: textInputElement.value,
+                        name: nameInputElement.value,
+                    })
+            })
 
-      // .then((response) => {
+            // .then((response) => {
 
-        
-      // })
-      .then((response) => {
-        if (response.status === 201 ) {
-          return response.json();
-        } else {
-          return Promise.reject("Сервер упал")
-        }
-      })
-      .then((response) => {
-        return response;
-      })
-      .then((responseData) => {
-        return fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
-          method: "GET",
-        });
-      })
-      .then((response) => {
-        return response;
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        return response;
-      })
-      .then((responseData) => {
-        const ret = responseData.comments.map((comment, index) => {
-          const date = new Date(comment.date)
-          return {
-          name: comment.author.name,
-          date: date.getDate().toString().padStart(2, '0') + '.' +
-            (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
-            date.getFullYear().toString().slice(-2) + ' ' +
-            date.getHours().toString().padStart(2, '0') + ':' +
-            date.getMinutes().toString().padStart(2, '0'),
-          coments: comment.text,
-          likes: comment.likes,
-          isActiveLike: false,
-          }
-        });
-       numberLikes  =  ret;
-       nameInputElement.value = "";
-       textInputElement.value = "";
-        renderComments();
-      })
-      // .then((response) => {
-      //   return response;
-      // })
-      // .then((responseData) => {
-      //   if (response.status === 500) {
-      //     throw new Error("Ошибка сервера")
-      //   } else {
-      //     return response.json();
-      //   }
-        
-      // })
-      .then((data) => {
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
-      })
-      .catch((error) => { 
-        buttonElement.disabled = false;
-        buttonElement.textContent = "Написать";
 
-      alert('Имя и комментарий должн быть не менее трех символов!');
-      console.log(error)
-    })
- });
+            // })
+            .then((response) => {
+                if (response.status === 201) {
+                    return response.json();
+                } else {
+                    throw new Error('описание ошибки');
+                }
+            })
+            .then((responseData) => {
+                return fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+                    method: "GET",
+                });
+            })
+            .then((response) => {
+                return response;
+            })
+            .then((response) => {
+                return response.json();
+            })
+            .then((responseData) => {
+                const ret = responseData.comments.map((comment, index) => {
+                    const date = new Date(comment.date)
+                    return {
+                        name: comment.author.name,
+                        date: date.getDate().toString().padStart(2, '0') + '.' +
+                            (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+                            date.getFullYear().toString().slice(-2) + ' ' +
+                            date.getHours().toString().padStart(2, '0') + ':' +
+                            date.getMinutes().toString().padStart(2, '0'),
+                        coments: comment.text,
+                        likes: comment.likes,
+                        isActiveLike: false,
+                    }
+                });
+                numberLikes = ret;
+                nameInputElement.value = "";
+                textInputElement.value = "";
+                renderComments();
+            })
+            .then((data) => {
+                buttonElement.disabled = false;
+                buttonElement.textContent = "Написать";
+            })
+            // .catch((error) => {
+            //     buttonElement.disabled = false;
+            //     buttonElement.textContent = "Написать";
+            // })
+            // .then((response) => {
+            //     if (response.status === 500) {
+            //         throw new Error('Сервер сломался');
+            //     } else {
+            //         return response.json();
+            //     }
+            .catch((error) => {
+                if (error.message === "Сервер сломался") {
+                    buttonElement.disabled = false;
+                    buttonElement.textContent = "Написать";
+                    alert("Сервер сломался, попробуй позже");
+                    return;
+                }
+            })
 
-  renderComments()
+            .then((response) => {
+                alert('Имя и комментарий должн быть не менее трех символов!');
+                console.log(error)
+            })
+    });
+
+    renderComments()
 </script>
 
 </html>
