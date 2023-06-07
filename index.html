@@ -140,14 +140,17 @@
       })
 
       .then((response) => {
-        console.log("Время: " + (Date.now() - startAt));
-        return response;
+        if (response.status === 500 ) {
+          
+        } else {
+          return response;
+        }
+        
       })
       .then((response) => {
         return response.json();
       })
       .then((response) => {
-        console.log("Время: " + (Date.now() - startAt));
         return response;
       })
       .then((responseData) => {
@@ -156,14 +159,12 @@
         });
       })
       .then((response) => {
-        console.log("Время: " + (Date.now() - startAt));
         return response;
       })
       .then((response) => {
         return response.json();
       })
       .then((response) => {
-        console.log("Время: " + (Date.now() - startAt));
         return response;
       })
       .then((responseData) => {
@@ -189,11 +190,13 @@
       .then((data) => {
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
-      });
-      // .catch((error) => { /* обработчик (catch) */
-      // // Этот код выполнится, потому что в обработчике then выше выброшено исключение
-      // alert('Произошла ошибка');
-      // console.log(error) // => TypeError: undefined has no properties
+      })
+      .catch((error) => { /* обработчик (catch) */.
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      // Этот код выполнится, потому что в обработчике then выше выброшено исключение
+      alert('Произошла ошибка');
+      console.log(error) // => TypeError: undefined has no properties
     })
   // });
 
