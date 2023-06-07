@@ -139,16 +139,16 @@
           })
       })
 
-      .then((response) => {
-        if (response.status === 500 ) {
-          
-        } else {
-          return response;
-        }
+      // .then((response) => {
+
         
-      })
+      // })
       .then((response) => {
-        return response.json();
+        if (response.status === 201 ) {
+          return response.json();
+        } else {
+          return Promise.reject("Сервер упал")
+        }
       })
       .then((response) => {
         return response;
@@ -191,14 +191,13 @@
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
       })
-      .catch((error) => { /* обработчик (catch) */.
+      .catch((error) => { 
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
-      // Этот код выполнится, потому что в обработчике then выше выброшено исключение
       alert('Произошла ошибка');
-      console.log(error) // => TypeError: undefined has no properties
+      console.log(error)
     })
-  // });
+ });
 
   renderComments()
 </script>
