@@ -187,6 +187,17 @@
        textInputElement.value = "";
         renderComments();
       })
+      // .then((response) => {
+      //   return response;
+      // })
+      // .then((responseData) => {
+      //   if (response.status === 500) {
+      //     throw new Error("Ошибка сервера")
+      //   } else {
+      //     return response.json();
+      //   }
+        
+      // })
       .then((data) => {
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
@@ -194,7 +205,8 @@
       .catch((error) => { 
         buttonElement.disabled = false;
         buttonElement.textContent = "Написать";
-      alert('Произошла ошибка');
+
+      alert('Имя и комментарий должн быть не менее трех символов!');
       console.log(error)
     })
  });
