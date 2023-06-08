@@ -29,60 +29,44 @@
   const textInputElement = document.getElementById('textInput');
   const dateElement = document.getElementById('date');
   const likeAddElement = document.querySelectorAll('.like-button');
+  const editButton = document.querySelector('.editButton');
 
-  const numberLikes = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      coments: "Это будет первый комментарий на этой странице",
-      likes: 1,
-      isActiveLike: false,
-    },
-    {
-      name: "Варвара Н.",
-      date: "13.02.22 19:22",
-      coments: "Мне нравится как оформлена эта страница! ❤",
-      likes: 75,
-      isActiveLike: false,
-    },
-  ]
+  let numberLikes = []
 
-  const renderLikes = () => {
-    const likeHTML = numberLikes.map((like, index) => {
-      let activeLike = '';
-      if (numberLikes[index].isActiveLike) {
-        activeLike = '-active-like'
-      }
-      return `<li class="comment">
-        <div class="comment-header">
-          <div>${like.name}</div>
-          <div>${like.date}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${like.coments}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">${like.likes}</span>
-            <button  data-index="${index}" class="like-button ${activeLike}" id="button-like"></button>
-          </div>
-        </div>
-      </li>`;
-    })
-      .join("");
+  const fetchPromise = fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+    method: "GET",
+  });
 
-    listElement.innerHTML = likeHTML;
-  }
-  renderLikes();
+  fetchPromise.then((response) => {
+    const jsonPromise = response.json();
+    jsonPromise.then((responseData) => {
+
+      const aapComents = responseData.comments.map((comment) => {
+        const dateComment = new Date(comment.date);
+        return {
+          name: comment.author.name,
+          date: dateComment.getDate().toString().padStart(2, '0') + '.' +
+            (dateComment.getMonth() + 1).toString().padStart(2, '0') + '.' +
+            dateComment.getFullYear().toString().slice(-2) + ' ' +
+            dateComment.getHours().toString().padStart(2, '0') + ':' +
+            dateComment.getMinutes().toString().padStart(2, '0'),
+          coments: comment.text,
+          likes: comment.likes,
+          isActiveLike: false,
+        };
+      });
+
+      numberLikes = aapComents;
+      renderComments();
+    });
+  });
 
   const initLikeElement = () => {
     const likeAddElement = document.querySelectorAll('.like-button');
 
     for (const likeElements of likeAddElement) {
       likeElements.addEventListener('click', (e) => {
-        // e.stopPropagation();
+        e.stopPropagation();
         const index = likeElements.dataset.index;
         if (numberLikes[index].isActiveLike) {
           numberLikes[index].likes--
@@ -90,38 +74,143 @@
           numberLikes[index].likes++
         }
         numberLikes[index].isActiveLike = !numberLikes[index].isActiveLike;
-        renderLikes();
+        renderComments();
       });
     };
-  }
-  initLikeElement();
+  };
 
-  //код по клику на кнопку написать
+  const reply = () => {
+    const comentInput = document.querySelector('.add-form-text');
+    const editButton = document.querySelectorAll('.comment');
+    for (const button of editButton) {
+      button.addEventListener('click', () => {
+        comentInput.value = `${button.querySelector('.coment-text').innerHTML}`
+        // + 
+        // `\n\n${button.querySelector('.comment-header').innerHTML.numberLikes}`;
+      });
+    }
+  }
+
+  const renderComments = () => {
+    const likeHTML = numberLikes.map((comment, index) => {
+
+      return `<li class="comment">
+        <div class="comment-header">
+          <div>${comment.name}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body ">
+          <div  class="coment-text">
+            ${comment.coments}
+          </div>
+
+        </div>
+        <div class="comment-footer">
+          <div class="likes">
+            <span class="likes-counter">${comment.likes}</span>
+            <button  class="like-button "  data-index='${index}'></button>
+          </div>
+        </div>
+      </li>`
+    })
+      .join("");
+    listElement.innerHTML = likeHTML;
+    reply();
+    initLikeElement();
+  };
+  renderComments();
+
   buttonElement.addEventListener('click', () => {
     const oldListElement = listElement.innerHTML;
 
-    const date = new Date();
-    let options = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric',
-    };
-    const formatDate = date.toLocaleString("ru", options);
+    const startAt = Date.now();
+    console.log("Начинаем делать запрос");
 
-    listElement.innerHTML = oldListElement + initLikeElement();
+    buttonElement.disabled = true;
+    buttonElement.textContent = "Элемент добавлятся...";
 
-    numberLikes.push({
-      name: nameInputElement.value,
-      date: formatDate,
-      coments: textInputElement.value,
-      likes: 0,
-    });
-    renderLikes();
+    fetch('https://wedev-api.sky.pro/api/v1/dima-vorobev/comments',
+      {
+        method: 'POST',
+        body: JSON.stringify(
+          {
+            text: textInputElement.value,
+            name: nameInputElement.value,
+          })
+      })
+
+      // .then((response) => {
+
+
+      // })
+      .then((response) => {
+        if (response.status === 201) {
+          return response.json();
+        } else {
+          throw new Error('Ошибка 201');
+        }
+      })
+      .then((responseData) => {
+        return fetch("https://wedev-api.sky.pro/api/v1/dima-vorobev/comments", {
+          method: "GET",
+        });
+      })
+      .then((response) => {
+        return response;
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseData) => {
+        const ret = responseData.comments.map((comment, index) => {
+          const date = new Date(comment.date)
+          return {
+            name: comment.author.name,
+            date: date.getDate().toString().padStart(2, '0') + '.' +
+              (date.getMonth() + 1).toString().padStart(2, '0') + '.' +
+              date.getFullYear().toString().slice(-2) + ' ' +
+              date.getHours().toString().padStart(2, '0') + ':' +
+              date.getMinutes().toString().padStart(2, '0'),
+            coments: comment.text,
+            likes: comment.likes,
+            isActiveLike: false,
+          }
+        });
+        numberLikes = ret;
+        nameInputElement.value = "";
+        textInputElement.value = "";
+        renderComments();
+      })
+      .then((data) => {
+        buttonElement.disabled = false;
+        buttonElement.textContent = "Написать";
+      })
+      // .catch((error) => {
+      //     buttonElement.disabled = false;
+      //     buttonElement.textContent = "Написать";
+      // })
+      // .then((response) => {
+      //     if (response.status === 500) {
+      //         throw new Error('Сервер сломался');
+      //     } else {
+      //         return response.json();
+      //     }
+      .catch((error) => {
+        if (error.message === "Ошибка 201") {
+          buttonElement.disabled = false;
+          buttonElement.textContent = "Написать";
+          alert("Сервер сломался, попробуй позже");
+          return;
+        }
+      })
+
+      .catch((response) => {
+        alert('Имя и комментарий должн быть не менее трех символов!');
+        console.log(error)
+      })
   });
 
+  renderComments()
 </script>
 
 </html>
